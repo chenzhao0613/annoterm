@@ -25,7 +25,7 @@ async function runReview(ctx: ExtensionContext, requestedPath: string): Promise<
 		process.stdout.write("\x1b[2J\x1b[H");
 
 		try {
-			const child = spawnSync("tas", ["review", reviewPath, "--format", "prompt"], {
+			const child = spawnSync("annoterm", ["review", reviewPath, "--format", "prompt"], {
 				cwd: ctx.cwd,
 				env: process.env,
 				encoding: "utf8",
@@ -55,12 +55,12 @@ async function runReview(ctx: ExtensionContext, requestedPath: string): Promise<
 	});
 
 	if (execution.error) {
-		ctx.ui.notify(`Could not run tas: ${execution.error}`, "error");
+		ctx.ui.notify(`Could not run annoterm: ${execution.error}`, "error");
 		return null;
 	}
 	if (execution.status === 2 || execution.status === 130 || execution.signal) return null;
 	if (execution.status !== 0) {
-		ctx.ui.notify(`tas review exited with code ${execution.status ?? "unknown"}`, "error");
+		ctx.ui.notify(`annoterm review exited with code ${execution.status ?? "unknown"}`, "error");
 		return null;
 	}
 
@@ -78,7 +78,7 @@ export default function markdownReview(pi: ExtensionAPI) {
 				"-g", "*.md",
 				"-g", "!node_modules/**",
 				"-g", "!.git/**",
-				"-g", "!.tas/**",
+				"-g", "!.annoterm/**",
 				"-g", "!dist/**",
 			],
 			{cwd, timeout: 5_000},
@@ -118,8 +118,8 @@ export default function markdownReview(pi: ExtensionAPI) {
 	pi.registerTool({
 		name: "review_markdown",
 		label: "Review Markdown",
-		description: "Open a Markdown file with the TAS CLI. The human comments on specific blocks and submits one batch. The completed feedback is returned directly as this tool result.",
-		promptSnippet: "Ask the human to review a generated Markdown plan with TAS and receive anchored feedback directly",
+		description: "Open a Markdown file with the Annoterm CLI. The human comments on specific blocks and submits one batch. The completed feedback is returned directly as this tool result.",
+		promptSnippet: "Ask the human to review a generated Markdown plan with Annoterm and receive anchored feedback directly",
 		promptGuidelines: [
 			"Use review_markdown after writing a plan that requires human review; wait for its feedback before implementing.",
 		],
@@ -136,7 +136,7 @@ export default function markdownReview(pi: ExtensionAPI) {
 	});
 
 	pi.registerCommand("review-md", {
-		description: "Review a Markdown file with TAS and send the completed feedback directly to the agent",
+		description: "Review a Markdown file with Annoterm and send the completed feedback directly to the agent",
 		getArgumentCompletions: completeMarkdownPath,
 		handler: async (args, ctx) => {
 			const requestedPath = args.trim();

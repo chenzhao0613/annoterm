@@ -1,10 +1,10 @@
 {
-  "name": "terminal-artifact-system",
+  "name": "annoterm",
   "version": "0.1.0-demo",
   "private": true,
   "type": "module",
   "bin": {
-    "tas": "dist/cli.js"
+    "annoterm": "dist/cli.js"
   },
   "scripts": {
     "build": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\" && tsc -p tsconfig.json",

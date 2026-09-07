@@ -1,17 +1,17 @@
-# Terminal Artifact System: Technical Specification
+# Annoterm: Technical Specification
 
-- **Working name:** Terminal Artifact System (TAS)
-- **CLI name:** `tas`
-- **Status:** Proposal for review
-- **Implementation status:** Not started
+- **Product name:** Annoterm
+- **CLI name:** `annoterm`
+- **Status:** Markdown review MVP implemented
+- **Implementation:** TypeScript, Ink, React, Remark, and terminal Markdown rendering
 
 > **Scope update:** The first implementation is intentionally limited to rendering and reviewing one normal Markdown file, then returning comments as a batch. See [Markdown Review MVP](markdown-review-mvp.md). The generalized artifact system below is retained as the future architecture and should not be built before the focused interaction is validated.
 
 ## 1. Summary
 
-TAS is a local-first, terminal-native feedback environment for structured artifacts produced by an AI coding agent. The agent publishes a declarative artifact document. A human opens the artifact in a keyboard-driven TUI, moves focus among semantic elements, and attaches comments to an element or a precise subrange. The agent retrieves those comments as structured data, updates the artifact, and publishes a new immutable revision. TAS preserves feedback across revisions and lets the human verify or reopen proposed fixes.
+Annoterm is a local-first, terminal-native feedback environment for structured artifacts produced by an AI coding agent. The agent publishes a declarative artifact document. A human opens the artifact in a keyboard-driven TUI, moves focus among semantic elements, and attaches comments to an element or a precise subrange. The agent retrieves those comments as structured data, updates the artifact, and publishes a new immutable revision. Annoterm preserves feedback across revisions and lets the human verify or reopen proposed fixes.
 
-The first and most important use case is reviewing an agent-generated plan without opening a new prompt. When the user notices an issue, they focus that exact plan item, press one key, write only the thought, save it, and continue reading. TAS automatically carries the item identity, quoted context, plan revision, and review state back to the waiting agent.
+The first and most important use case is reviewing an agent-generated plan without opening a new prompt. When the user notices an issue, they focus that exact plan item, press one key, write only the thought, save it, and continue reading. Annoterm automatically carries the item identity, quoted context, plan revision, and review state back to the waiting agent.
 
 The initial system has no browser UI, webview, cloud service, protocol server, or executable artifact code. The TUI, CLI, and persistence layer ship as one local binary; host-specific integrations are optional wrappers around the CLI contract.
 
@@ -36,7 +36,7 @@ The initial system has no browser UI, webview, cloud service, protocol server, o
 - Real-time multi-user collaboration or cloud synchronization.
 - Freehand drawing and coordinate-based annotations.
 - Automatic semantic re-anchoring across arbitrary rewrites.
-- Replacing source-code review tools. TAS may render code and diffs, but feedback is anchored to the artifact document.
+- Replacing source-code review tools. Annoterm may render code and diffs, but feedback is anchored to the artifact document.
 - Full bidirectional editing of the artifact by the human. Human-authored changes are comments and feedback state transitions.
 
 ## 4. Design principles
@@ -75,12 +75,12 @@ This is the lead MVP scenario and should determine product tradeoffs.
 2. The agent waits at the review checkpoint instead of ending the workflow and requiring another user prompt.
 3. The TUI shows the plan with a visible **Reviewing** banner. Each plan item is a separately focusable semantic node.
 4. While reading, the user focuses an item and presses `c`. A compact composer opens without replacing the plan or requiring the user to quote it.
-5. TAS automatically records the plan ID, revision, item ID, item text, structural path, and nearby context. The user writes only their thought.
+5. Annoterm automatically records the plan ID, revision, item ID, item text, structural path, and nearby context. The user writes only their thought.
 6. Saving the comment immediately persists it, closes the composer, marks the item with a feedback badge, and returns focus to the plan so review can continue.
 7. The user may comment on as many items as needed and can edit any pending comment from its badge.
-8. The user invokes **Finish review** once. TAS atomically submits the pending comments as one structured review bundle.
+8. The user invokes **Finish review** once. Annoterm atomically submits the pending comments as one structured review bundle.
 9. The waiting agent resumes automatically with the bundle. The user does not create a follow-up prompt, copy plan text, enumerate references, or remind the agent what it generated.
-10. The agent revises the plan and publishes a new revision. TAS maps comments by stable plan-item IDs and lets the user verify each response.
+10. The agent revises the plan and publishes a new revision. Annoterm maps comments by stable plan-item IDs and lets the user verify each response.
 
 The interaction succeeds only if adding a comment feels cheaper than holding the thought in memory. Opening the composer, saving, and returning to reading must all happen in the current TUI context.
 
@@ -92,7 +92,7 @@ Comments created outside a review request are submitted immediately. A workspace
 
 ### 5.3 General artifact revision flow
 
-For artifacts outside a plan review, the user can still focus any annotatable element, add feedback, and let the agent retrieve it by event cursor. The agent acknowledges the item, publishes a revision from the latest base, and marks feedback addressed in that revision. TAS computes a structural difference, resolves anchors, and leaves final resolution to the human.
+For artifacts outside a plan review, the user can still focus any annotatable element, add feedback, and let the agent retrieve it by event cursor. The agent acknowledges the item, publishes a revision from the latest base, and marks feedback addressed in that revision. Annoterm computes a structural difference, resolves anchors, and leaves final resolution to the human.
 
 ## 6. User interface
 
@@ -173,7 +173,7 @@ An artifact is a versioned declarative tree. The exact schema will be published 
 
 ```json
 {
-  "schemaVersion": "tas.artifact/v1",
+  "schemaVersion": "annoterm.artifact/v1",
   "artifactId": "checkout-review",
   "baseRevision": 3,
   "title": "Checkout review",
@@ -217,7 +217,7 @@ An artifact is a versioned declarative tree. The exact schema will be published 
 }
 ```
 
-`revision` is assigned by TAS and is not trusted from an input document. A publish supplies `baseRevision` separately or in the envelope. The operation fails with a conflict if that base is no longer current.
+`revision` is assigned by Annoterm and is not trusted from an input document. A publish supplies `baseRevision` separately or in the envelope. The operation fails with a conflict if that base is no longer current.
 
 ### 7.2 Node contract
 
@@ -346,7 +346,7 @@ Rendered terminal coordinates are included only as transient diagnostics and nev
 
 ### 8.3 Anchor resolution across revisions
 
-When a revision is published, TAS resolves each non-resolved annotation in this order:
+When a revision is published, Annoterm resolves each non-resolved annotation in this order:
 
 1. Find the same node ID.
 2. Confirm the node type and selector subtype still apply.
@@ -400,7 +400,7 @@ Review states are `collecting`, `submitted`, and `cancelled`.
 - A blocked CLI wait operation or host adapter receives the complete feedback bundle and resumes the agent.
 - Cancelling a review does not delete comments; the human chooses whether to retain them as drafts or submit them independently.
 
-This session is not another prompt. The only human-authored text is the thought attached to each relevant item; TAS constructs and delivers the structured review envelope.
+This session is not another prompt. The only human-authored text is the thought attached to each relevant item; Annoterm constructs and delivers the structured review envelope.
 
 ## 9. Revisions and updates
 
@@ -420,7 +420,7 @@ A publish transaction:
 8. appends a monotonic workspace event, and
 9. commits atomically.
 
-On a stale base, TAS returns `REVISION_CONFLICT` with the current revision. It never silently overwrites a concurrent update.
+On a stale base, Annoterm returns `REVISION_CONFLICT` with the current revision. It never silently overwrites a concurrent update.
 
 Domain-level patch operations keyed by node ID may be added after the snapshot workflow is proven. JSON Patch is not recommended because array-index paths are fragile and conflict with stable semantic addressing.
 
@@ -442,20 +442,20 @@ Persisting annotations alone is not sufficient for the plan-review use case: the
 
 ```sh
 # Blocking interactive review; agent receives stdout after Finish review
-tas review PLAN.md --format json
-tas review PLAN.md --format prompt
+annoterm review PLAN.md --format json
+annoterm review PLAN.md --format prompt
 
 # Retrieve reviews completed in another process
-tas feedback latest --format json
-tas feedback list --format json
-tas feedback wait --format json --timeout 300000
+annoterm feedback latest --format json
+annoterm feedback list --format json
+annoterm feedback wait --format json --timeout 300000
 
 # Future generalized artifact operations
-tas artifact publish --file artifact.json --base-revision 3 --json
-tas artifact get checkout-review --revision latest --json
-tas artifact list --json
-tas schema artifact > artifact.schema.json
-tas doctor
+annoterm artifact publish --file artifact.json --base-revision 3 --json
+annoterm artifact get checkout-review --revision latest --json
+annoterm artifact list --json
+annoterm schema artifact > artifact.schema.json
+annoterm doctor
 ```
 
 Commands print human-readable output only when stdout is an interactive terminal. Captured or redirected output defaults to stable JSON. TUI output never enters stdout, diagnostics go to stderr, and nonzero exits produce no machine payload. The review CLI uses a workspace lock and documented exit codes.
@@ -487,7 +487,7 @@ Commands print human-readable output only when stdout is an interactive terminal
 
 ```text
 project/
-  .tas/
+  .annoterm/
     config.toml
     state.db
     state.db-wal          # transient when open
@@ -495,7 +495,7 @@ project/
     exports/              # explicit portable exports
 ```
 
-`.tas/state.db*` should normally be ignored by Git. `tas export` will produce reviewable JSON/JSONL bundles when feedback needs to be committed or transferred. Whether exports are part of the MVP is a review decision.
+`.annoterm/state.db*` should normally be ignored by Git. `annoterm export` will produce reviewable JSON/JSONL bundles when feedback needs to be committed or transferred. Whether exports are part of the MVP is a review decision.
 
 ### 11.2 SQLite store
 
@@ -524,7 +524,7 @@ A future Unix-domain-socket notifier may reduce polling, but it is an optimizati
 - Artifact revisions and annotation changes commit atomically.
 - Draft comments autosave separately and are restored after a crash.
 - The TUI never leaves the terminal in raw mode; panic hooks restore terminal state.
-- `tas doctor` checks schema version, database integrity, stale drafts, terminal capabilities, and configuration.
+- `annoterm doctor` checks schema version, database integrity, stale drafts, terminal capabilities, and configuration.
 
 ## 12. Rendering architecture
 
@@ -550,7 +550,7 @@ Measurement and layout are pure functions of document, viewport, theme metrics, 
 - Width is resolved before wrapped-content height.
 - Overflow defaults to clipping; content nodes may opt into vertical scrolling.
 - Minimum sizes take precedence over preferred sizes; maximum sizes clamp afterward.
-- If constraints cannot be satisfied, TAS renders a visible overflow indicator and records a diagnostic rather than panicking.
+- If constraints cannot be satisfied, Annoterm renders a visible overflow indicator and records a diagnostic rather than panicking.
 - Unicode width uses a pinned width implementation. Ambiguous-width behavior is configurable.
 
 ### 12.3 Local view state
@@ -559,7 +559,7 @@ Scroll positions, expanded tree nodes, active tabs, focused element, and pane ar
 
 ### 12.4 Plain rendering
 
-`tas artifact render --plain` emits a linear, escape-free representation for logs, screen readers, debugging, and terminals without interactive capabilities. Semantic IDs can optionally be shown beside elements.
+`annoterm artifact render --plain` emits a linear, escape-free representation for logs, screen readers, debugging, and terminals without interactive capabilities. Semantic IDs can optionally be shown beside elements.
 
 ## 13. Security and trust boundaries
 
@@ -571,7 +571,7 @@ Scroll positions, expanded tree nodes, active tabs, focused element, and pane ar
 6. Enforce node, depth, text, metadata, and render-time limits to prevent memory/CPU abuse.
 7. Keep CLI feedback on stdout and data in the local workspace by default.
 8. Record actor and timestamp on all feedback mutations.
-9. Redact secrets only through an explicit future policy; TAS must not claim automatic secret detection.
+9. Redact secrets only through an explicit future policy; Annoterm must not claim automatic secret detection.
 
 ## 14. Recommended implementation stack
 
@@ -592,13 +592,13 @@ Proposed crate/module boundaries:
 
 ```text
 crates/
-  tas-model/       artifact and feedback types, schema, validation
-  tas-store/       SQLite repositories, migrations, event log
-  tas-layout/      measurement, layout, hit maps, structural diff
-  tas-render/      node renderers, themes, terminal capability mapping
-  tas-app/         TUI state machine and commands
-  tas-protocol/    stable CLI DTOs and error codes
-  tas-cli/         tas binary, interactive reviewer, feedback readers/waiter
+  annoterm-model/       artifact and feedback types, schema, validation
+  annoterm-store/       SQLite repositories, migrations, event log
+  annoterm-layout/      measurement, layout, hit maps, structural diff
+  annoterm-render/      node renderers, themes, terminal capability mapping
+  annoterm-app/         TUI state machine and commands
+  annoterm-protocol/    stable CLI DTOs and error codes
+  annoterm-cli/         annoterm binary, interactive reviewer, feedback readers/waiter
 ```
 
 A Cargo workspace is preferable even if these begin as modules; it makes trust and dependency boundaries testable.
@@ -672,7 +672,7 @@ These are p95 local targets, not hard protocol guarantees. Large documents shoul
 
 - Create the Rust workspace and SQLite migrations.
 - Implement `plan`, `planItem`, `text`, `column`, `row`, and `box`.
-- Implement `tas init`, `artifact publish/get`, `review request/wait`, `feedback list`, and `tas open`.
+- Implement `annoterm init`, `artifact publish/get`, `review request/wait`, `feedback list`, and `annoterm open`.
 - Implement plan-item focus, the quick-comment composer, pending badges, and **Finish review**.
 - Implement full-snapshot revisions and event polling.
 - Exit criterion: an agent can publish a plan and wait; a human can comment on several items without leaving the TUI; finishing the review resumes the agent with one structured bundle and no new user prompt.
@@ -693,7 +693,7 @@ These are p95 local targets, not hard protocol guarantees. Large documents shoul
 ### Milestone 4: Agent integration and hardening
 
 - Harden the CLI stdout contract, feedback wait behavior, and stable machine error codes.
-- Add resource limits, fuzzing, `tas doctor`, export/import if approved, and packaging.
+- Add resource limits, fuzzing, `annoterm doctor`, export/import if approved, and packaging.
 - Document generator guidance, especially stable ID policy.
 - Exit criterion: acceptance criteria below pass in CI and install artifacts are reproducible.
 
@@ -738,16 +738,13 @@ These are p95 local targets, not hard protocol guarantees. Large documents shoul
 | Agent incorrectly claims completion | Agent may only mark addressed; human resolves by default |
 | Comments are trapped in local state | Provide explicit JSON/JSONL export/import if approved for MVP |
 
-## 21. Decisions requested before implementation
+## 21. Remaining architecture decisions
 
-1. **Name:** keep `Terminal Artifact System` / `tas`, or choose a product name?
-2. **Technology:** approve Rust and the single-binary architecture?
-3. **Review delivery:** batch comments behind **Finish review** by default, or send every saved comment to the agent immediately?
-4. **Host behavior:** require the agent integration to support wait/resume in the MVP so no follow-up prompt is needed?
-5. **MVP precision:** include text/code/table sub-selection in the MVP, or ship plan-item/node-level annotations first and add precise selectors immediately afterward?
-6. **Feedback ownership:** approve the default rule that agents can mark addressed but only humans can resolve?
-7. **Version storage:** retain every local revision indefinitely by default, or introduce configurable pruning at launch?
-8. **Portability:** include export/import in the MVP so feedback can be committed or shared, or keep it local-only initially?
-9. **Controls:** keep controls representational in v1, or require simulated interaction state and event recording?
+1. **Technology:** retain the TypeScript implementation or pursue a later Rust single-binary rewrite?
+2. **MVP precision:** add text/code/table sub-selection or retain plan-item/node-level annotations?
+3. **Feedback ownership:** should agents mark feedback addressed while only humans resolve it?
+4. **Version storage:** retain every local revision indefinitely or introduce configurable pruning?
+5. **Portability:** add explicit export/import or keep feedback local to the workspace?
+6. **Controls:** keep controls representational or add simulated interaction state and event recording?
 
-Recommended defaults are: keep the working name until a vertical slice exists; use Rust for a later production rewrite; batch comments until **Finish review**; require CLI wait/resume because it removes the new-prompt pain point; start with plan-item/node-level comments while designing precise selectors now; keep the CLI as the sole integration contract; retain human-only resolution; retain all revisions for v1; include a simple export before release; and defer simulated interactions.
+Current decisions are to use Annoterm as the product name, batch comments until **Finish review**, support CLI wait/resume, and keep the CLI as the sole integration contract.

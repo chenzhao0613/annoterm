@@ -24,7 +24,7 @@ export function acquireReviewLock(options: {
   filePath: string;
 }): ReviewLock {
   const cwd = options.cwd ?? process.cwd();
-  const locksDirectory = path.join(cwd, '.tas', 'locks');
+  const locksDirectory = path.join(cwd, '.annoterm', 'locks');
   const lockPath = path.join(locksDirectory, 'review.lock');
   const ownerPath = path.join(lockPath, 'owner.json');
   mkdirSync(locksDirectory, {recursive: true});

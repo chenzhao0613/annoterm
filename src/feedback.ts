@@ -15,7 +15,7 @@ export function feedbackPrompt(bundle: ReviewBundle): string {
       const source = comment.target.source;
       const quote = comment.target.quote.exact.trim();
       lines.push(
-        `### Comment ${index + 1} — lines ${source.startLine}–${source.endLine}`,
+        `### Comment ${index + 1} - lines ${source.startLine}–${source.endLine}`,
         '',
         `> ${quote.replace(/\n/g, '\n> ')}`,
         '',

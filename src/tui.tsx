@@ -208,7 +208,7 @@ export function ReviewApp({
           <Text> </Text>
           {comments.slice(0, Math.max(1, height - 9)).map(comment => {
             const block = blocks.find(candidate => candidate.id === comment.blockId);
-            return <Text key={comment.id}>{`line ${block?.source.startLine ?? '?'} · ${hardSlice(block?.text ?? '', 28)} — ${hardSlice(comment.body, Math.max(12, width - 48))}`}</Text>;
+            return <Text key={comment.id}>{`line ${block?.source.startLine ?? '?'} · ${hardSlice(block?.text ?? '', 28)} - ${hardSlice(comment.body, Math.max(12, width - 48))}`}</Text>;
           })}
           <Text> </Text>
           <Text color="green">Enter submit to agent</Text>

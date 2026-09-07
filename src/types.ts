@@ -56,7 +56,7 @@ export interface ReviewBundleComment {
 }
 
 export interface ReviewBundle {
-  schemaVersion: 'tas.markdown-review/v1';
+  schemaVersion: 'annoterm.markdown-review/v1';
   reviewId: string;
   state: 'submitted';
   file: {
@@ -72,7 +72,7 @@ export interface ReviewBundle {
 }
 
 export interface PendingReview {
-  schemaVersion: 'tas.markdown-review-draft/v1';
+  schemaVersion: 'annoterm.markdown-review-draft/v1';
   reviewId: string;
   state: 'collecting';
   file: {

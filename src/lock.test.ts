@@ -6,9 +6,9 @@ import test from 'node:test';
 import {acquireReviewLock, ReviewLockedError} from './lock.js';
 
 test('review lock prevents overlapping sessions and releases cleanly', () => {
-  const cwd = mkdtempSync(path.join(tmpdir(), 'tas-lock-'));
+  const cwd = mkdtempSync(path.join(tmpdir(), 'annoterm-lock-'));
   try {
-    const lockPath = path.join(cwd, '.tas', 'locks', 'review.lock');
+    const lockPath = path.join(cwd, '.annoterm', 'locks', 'review.lock');
     const lock = acquireReviewLock({cwd, filePath: 'PLAN.md'});
     assert.equal(existsSync(lockPath), true);
     assert.throws(
@@ -23,9 +23,9 @@ test('review lock prevents overlapping sessions and releases cleanly', () => {
 });
 
 test('review lock recovers an abandoned owner', () => {
-  const cwd = mkdtempSync(path.join(tmpdir(), 'tas-stale-lock-'));
+  const cwd = mkdtempSync(path.join(tmpdir(), 'annoterm-stale-lock-'));
   try {
-    const lockDirectory = path.join(cwd, '.tas', 'locks', 'review.lock');
+    const lockDirectory = path.join(cwd, '.annoterm', 'locks', 'review.lock');
     mkdirSync(lockDirectory, {recursive: true});
     writeFileSync(path.join(lockDirectory, 'owner.json'), JSON.stringify({pid: 2_147_483_647}));
     const lock = acquireReviewLock({cwd, filePath: 'PLAN.md'});

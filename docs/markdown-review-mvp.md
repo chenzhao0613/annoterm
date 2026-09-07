@@ -24,7 +24,7 @@ agent receives one contextual JSON bundle and resumes
 
 ## 2. Can a terminal render Markdown?
 
-Yes. TAS will parse Markdown into a syntax tree and translate it into styled terminal cells. It will not display browser typography, but it can render the document clearly and interactively:
+Yes. Annoterm will parse Markdown into a syntax tree and translate it into styled terminal cells. It will not display browser typography, but it can render the document clearly and interactively:
 
 - headings as bold, colored lines,
 - emphasis, strong text, and strikethrough with terminal attributes,
@@ -92,7 +92,7 @@ These features remain in the broader design but should not delay validation of t
 ### 4.1 Standalone/agent invocation
 
 ```sh
-tas review PLAN.md --format json
+annoterm review PLAN.md --format json
 ```
 
 The process reads and hashes `PLAN.md`, opens the TUI on the controlling terminal, and blocks while the human reviews. On **Finish review**, it closes the TUI and writes exactly one JSON `ReviewBundle` to stdout. The invoking agent receives that result and continues its existing turn.
@@ -107,7 +107,7 @@ To keep machine output clean:
 Optional file output supports hosts that cannot capture stdout:
 
 ```sh
-tas review PLAN.md --output .tas/completed/review.json
+annoterm review PLAN.md --output .annoterm/completed/review.json
 ```
 
 ### 4.2 Host integration
@@ -115,10 +115,10 @@ tas review PLAN.md --output .tas/completed/review.json
 The preferred host behavior is a blocking interactive review call:
 
 ```text
-write PLAN.md → call tas review → yield terminal to user → receive ReviewBundle
+write PLAN.md → call annoterm review → yield terminal to user → receive ReviewBundle
 ```
 
-If an agent host cannot attach an interactive child process to its terminal, it can run `tas feedback wait` while the reviewer launches `tas review` separately. A thin native host extension may invoke the same CLI contract as a convenience, but the CLI and persisted bundles remain authoritative. Protocol servers and resident daemons are unnecessary.
+If an agent host cannot attach an interactive child process to its terminal, it can run `annoterm feedback wait` while the reviewer launches `annoterm review` separately. A thin native host extension may invoke the same CLI contract as a convenience, but the CLI and persisted bundles remain authoritative. Protocol servers and resident daemons are unnecessary.
 
 ## 5. TUI interaction
 
@@ -192,7 +192,7 @@ Use a CommonMark-compliant parser with source positions, preferably `comrak` in 
 - strikethrough,
 - autolinks.
 
-The parser must expose start/end source positions or byte offsets for semantic nodes. If parser source positions are line/column only, TAS builds a line index to map them to UTF-8 byte offsets.
+The parser must expose start/end source positions or byte offsets for semantic nodes. If parser source positions are line/column only, Annoterm builds a line index to map them to UTF-8 byte offsets.
 
 ### 6.2 Semantic focus units
 
@@ -250,7 +250,7 @@ Each target records:
 
 The source line range helps the agent and human read the bundle. Byte offsets and exact/context text provide unambiguous machine targeting. The AST path is supplementary and must not be the only anchor because sibling insertion can change it.
 
-If `PLAN.md` changes externally while review is open, TAS keeps rendering the captured snapshot and shows a warning. The reviewer may:
+If `PLAN.md` changes externally while review is open, Annoterm keeps rendering the captured snapshot and shows a warning. The reviewer may:
 
 1. continue and submit against the original hash,
 2. abandon pending comments and reload, or
@@ -262,7 +262,7 @@ The MVP never silently moves a comment after a file change.
 
 ```json
 {
-  "schemaVersion": "tas.markdown-review/v1",
+  "schemaVersion": "annoterm.markdown-review/v1",
   "reviewId": "review_01J...",
   "state": "submitted",
   "file": {
@@ -309,7 +309,7 @@ Comments are ordered first by source position and then by creation time. The age
 Use simple atomic JSON files rather than SQLite for the MVP:
 
 ```text
-.tas/
+.annoterm/
   reviews/
     review_01J....pending.json
     review_01J....submitted.json
@@ -318,7 +318,7 @@ Use simple atomic JSON files rather than SQLite for the MVP:
 A draft contains the reviewed source snapshot or a content-addressed reference, pending comments, composer draft, focus target, and scroll position. Writes go to a temporary file, are flushed, and are atomically renamed. `q` exits without submission and prints a resume command:
 
 ```sh
-tas review --resume review_01J...
+annoterm review --resume review_01J...
 ```
 
 Submitted drafts can be pruned manually. Automatic retention policy is deferred.
@@ -386,7 +386,7 @@ Do not create the broader multi-crate architecture until this interaction valida
 
 ## 13. MVP acceptance criteria
 
-1. `tas review PLAN.md --format json` renders a representative Markdown plan in the current terminal.
+1. `annoterm review PLAN.md --format json` renders a representative Markdown plan in the current terminal.
 2. Every heading, paragraph, list item, and code block is keyboard reachable.
 3. Pressing `c` opens a composer while the target remains visible.
 4. Saving a comment takes the user directly back to reading and displays a pending badge.
@@ -403,7 +403,7 @@ Do not create the broader multi-crate architecture until this interaction valida
 - Feedback is block/item-level before arbitrary text-range selection.
 - Comments are persisted immediately but delivered as a batch only after **Finish review**.
 - The CLI is the primary integration contract: TUI on the controlling terminal, diagnostics on stderr, feedback on stdout.
-- Agents that cannot own the interactive process can use `tas feedback latest/list/wait`.
+- Agents that cannot own the interactive process can use `annoterm feedback latest/list/wait`.
 - Host-specific integrations are optional CLI adapters; there is no protocol-server dependency.
 - Draft persistence uses atomic JSON files before introducing SQLite.
 - The broader structured-artifact system remains a future direction, not an MVP dependency.

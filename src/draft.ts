@@ -8,7 +8,7 @@ export function sha256(value: string): string {
 }
 
 export function reviewDirectory(cwd = process.cwd()): string {
-  return path.join(cwd, '.tas', 'reviews');
+  return path.join(cwd, '.annoterm', 'reviews');
 }
 
 export function pendingPath(reviewId: string, cwd = process.cwd()): string {
@@ -70,7 +70,7 @@ export function buildBundle(options: {
     });
 
   return {
-    schemaVersion: 'tas.markdown-review/v1',
+    schemaVersion: 'annoterm.markdown-review/v1',
     reviewId: options.reviewId,
     state: 'submitted',
     file: {
@@ -101,7 +101,7 @@ export function listSubmittedBundles(cwd = process.cwd()): ReviewBundle[] {
     if (!file.endsWith('.submitted.json')) continue;
     const filePath = path.join(directory, file);
     const parsed = JSON.parse(readFileSync(filePath, 'utf8')) as ReviewBundle;
-    if (parsed.schemaVersion === 'tas.markdown-review/v1' && parsed.state === 'submitted') bundles.push(parsed);
+    if (parsed.schemaVersion === 'annoterm.markdown-review/v1' && parsed.state === 'submitted') bundles.push(parsed);
   }
   return bundles.sort((left, right) => {
     const timeDifference = Date.parse(right.file.reviewedAt) - Date.parse(left.file.reviewedAt);

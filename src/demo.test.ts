@@ -41,7 +41,7 @@ test('builds an ordered contextual review bundle', () => {
 });
 
 test('lists submitted feedback newest first and returns latest', () => {
-  const cwd = mkdtempSync(path.join(tmpdir(), 'tas-feedback-'));
+  const cwd = mkdtempSync(path.join(tmpdir(), 'annoterm-feedback-'));
   const source = '# Plan\n';
   const blocks = parseMarkdown(source);
   try {

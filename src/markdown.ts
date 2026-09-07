@@ -63,7 +63,7 @@ function directListItemText(node: AstNode): string {
     const value = plainText(child).trim();
     if (value) chunks.push(value);
   }
-  return chunks.join(' — ');
+  return chunks.join(' - ');
 }
 
 export function parseMarkdown(source: string): MarkdownBlock[] {

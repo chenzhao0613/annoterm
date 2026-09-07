@@ -14,7 +14,7 @@ Include a lightweight test comment in the demo flow to verify reviewed feedback 
 
 ## Draft storage
 
-For the demo, pending comments are written to atomic JSON files under `.tas/reviews/`. SQLite can wait until the interaction has been validated.
+For the demo, pending comments are written to atomic JSON files under `.annoterm/reviews/`. SQLite can wait until the interaction has been validated.
 
 > The review experience should feel faster than opening a new prompt and explaining which sentence needs attention.
 

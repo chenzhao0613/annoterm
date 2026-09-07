@@ -33,10 +33,10 @@ class CliError extends Error {
 
 function usage(): never {
   process.stderr.write(`Usage:
-  tas review <markdown-file> [--format human|json|prompt] [--output <file>]
-  tas feedback latest [--format human|json|prompt]
-  tas feedback list [--format human|json|prompt]
-  tas feedback wait [--format human|json|prompt] [--timeout <milliseconds>]
+  annoterm review <markdown-file> [--format human|json|prompt] [--output <file>]
+  annoterm feedback latest [--format human|json|prompt]
+  annoterm feedback list [--format human|json|prompt]
+  annoterm feedback wait [--format human|json|prompt] [--timeout <milliseconds>]
 
 Review keys:
   j/k or arrows  navigate blocks
@@ -95,7 +95,7 @@ function openTerminal(): TerminalIo {
     if (inputFd !== undefined) try { closeSync(inputFd); } catch {}
     if (outputFd !== undefined) try { closeSync(outputFd); } catch {}
     throw new CliError(
-      'Interactive review needs a controlling terminal. Run TAS in a terminal, or have the agent invoke it from an interactive session.',
+      'Interactive review needs a controlling terminal. Run Annoterm in a terminal, or have the agent invoke it from an interactive session.',
       69,
     );
   }
@@ -147,7 +147,7 @@ async function reviewCommand(args: string[]): Promise<void> {
   let cancelled = false;
 
   const draftFor = (comments: ReviewComment[]): PendingReview => ({
-    schemaVersion: 'tas.markdown-review-draft/v1',
+    schemaVersion: 'annoterm.markdown-review-draft/v1',
     reviewId,
     state: 'collecting',
     file: {path: requestedPath, sha256: fileHash, source},
@@ -206,7 +206,7 @@ async function reviewCommand(args: string[]): Promise<void> {
 
 function listValue(bundles: ReviewBundle[], format: OutputFormat): string {
   if (format === 'json') {
-    return `${JSON.stringify({schemaVersion: 'tas.feedback-list/v1', reviews: bundles}, null, 2)}\n`;
+    return `${JSON.stringify({schemaVersion: 'annoterm.feedback-list/v1', reviews: bundles}, null, 2)}\n`;
   }
   if (format === 'prompt') return bundles.map(feedbackPrompt).join('\n\n---\n\n') + (bundles.length ? '\n' : '');
   if (bundles.length === 0) return 'No submitted reviews.\n';
@@ -267,6 +267,6 @@ main().catch(error => {
     : error instanceof ReviewLockedError
       ? new CliError(error.message, error.exitCode)
       : new CliError(error instanceof Error ? error.message : String(error));
-  if (cliError.message) process.stderr.write(`tas: ${cliError.message}\n`);
+  if (cliError.message) process.stderr.write(`annoterm: ${cliError.message}\n`);
   process.exitCode = cliError.exitCode;
 });
