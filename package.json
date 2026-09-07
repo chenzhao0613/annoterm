@@ -1,0 +1,37 @@
+{
+  "name": "terminal-artifact-system",
+  "version": "0.1.0-demo",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "tas": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\" && tsc -p tsconfig.json",
+    "postbuild": "node -e \"require('node:fs').chmodSync('dist/cli.js',0o755)\"",
+    "start": "node dist/cli.js",
+    "demo": "tsx src/cli.tsx review examples/PLAN.md --format json",
+    "test": "tsx --test src/demo.test.ts src/lock.test.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "ink": "^6.5.1",
+    "marked": "^15.0.12",
+    "marked-terminal": "^7.3.0",
+    "react": "^19.1.1",
+    "remark-gfm": "^4.0.1",
+    "remark-parse": "^11.0.0",
+    "slice-ansi": "^7.1.2",
+    "string-width": "^7.2.0",
+    "unified": "^11.0.5"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.1",
+    "@types/react": "^19.1.12",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
